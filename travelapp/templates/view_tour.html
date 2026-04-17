@@ -1,0 +1,584 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>View Tours - Travela</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <style>
+        /* Page Header */
+        .page-header-banner {
+            background: linear-gradient(rgba(10, 35, 66, 0.82), rgba(26, 110, 138, 0.82)),
+                        url("{% static 'img/bg-hero.jpg' %}") center/cover no-repeat;
+            padding: 55px 0 38px;
+        }
+        .breadcrumb-item a { color: rgba(255,255,255,0.72); text-decoration: none; }
+        .breadcrumb-item a:hover { color: #fff; }
+        .breadcrumb-item.active { color: #fff; }
+        .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.45); }
+
+        /* Tour Card */
+        .tour-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.25s, box-shadow 0.25s;
+            background: #fff;
+            height: 100%;
+        }
+        .tour-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.13);
+        }
+        .tour-card-img {
+            position: relative;
+            overflow: hidden;
+            height: 210px;
+        }
+        .tour-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+        .tour-card:hover .tour-card-img img {
+            transform: scale(1.06);
+        }
+
+        /* Badges */
+        .badge-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--primary, #0d6efd);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-type {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* Card Body */
+        .tour-card-body { padding: 1.1rem 1.25rem; }
+        .tour-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tour-destination {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        .tour-destination i { color: var(--primary, #0d6efd); margin-right: 4px; }
+
+        /* Meta Row */
+        .tour-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12.5px;
+            color: #6b7280;
+            padding: 10px 0;
+            border-top: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
+            margin-bottom: 10px;
+        }
+        .tour-meta span i { margin-right: 4px; color: var(--primary, #0d6efd); }
+
+        /* Stars */
+        .tour-stars { color: #f59e0b; font-size: 13px; }
+        .tour-rating-val { font-size: 13px; color: #374151; font-weight: 600; margin-left: 4px; }
+
+        /* Price */
+        .tour-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary, #0d6efd);
+        }
+        .tour-price span { font-size: 12px; color: #9ca3af; font-weight: 400; }
+
+        /* Card Footer */
+        .tour-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #f8f9fa;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 1rem;
+        }
+        .empty-state i { font-size: 4rem; color: #d1d5db; margin-bottom: 1rem; }
+        .empty-state h4 { color: #6b7280; font-weight: 600; }
+        .empty-state p { color: #9ca3af; font-size: 14px; }
+
+        /* Search / Filter Bar */
+        .filter-bar {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+        }
+        .filter-bar .form-select,
+        .filter-bar .form-control {
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid #e5e7eb;
+        }
+        .filter-bar .form-select:focus,
+        .filter-bar .form-control:focus {
+            border-color: var(--primary, #0d6efd);
+            box-shadow: none;
+        }
+
+        /* Tour count badge */
+        .tour-count {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 1.25rem;
+        }
+        .tour-count strong { color: #1a1a2e; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-primary px-5 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+                <div class="d-inline-flex align-items-center" style="height: 45px;">
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-twitter fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-instagram fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle" href=""><i class="fab fa-youtube fw-normal"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end">
+                <div class="d-inline-flex align-items-center" style="height: 45px;">
+                    {% if request.session.email %}
+                    <a href="{% url 'logout' %}"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Logout</small></a>
+                    {% else %}
+                    <a href="{% url 'register' %}"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a>
+                    <a href="{% url 'login' %}"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a>
+                    {% endif %}
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown"><small><i class="fa fa-home me-2"></i> My Dashboard</small></a>
+                        <div class="dropdown-menu rounded">
+                            {% if request.session.email %}
+                            <a href="{% url 'profile' %}" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
+                            {% endif %}
+                            <a href="#" class="dropdown-item"><i class="fas fa-comment-alt me-2"></i> Inbox</a>
+                            <a href="#" class="dropdown-item"><i class="fas fa-bell me-2"></i> Notifications</a>
+                            {% if request.session.email %}
+                            <a href="#" class="dropdown-item"><i class="fas fa-cog me-2"></i> Account Settings</a>
+                            <a href="{% url 'update_password' %}" class="dropdown-item"><i class="fas fa-power-off me-2"></i> Update Password</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+            <a href="" class="navbar-brand p-0">
+                <h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travela</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto py-0">
+                    <a href="{% url 'index' %}" class="nav-item nav-link">Home</a>
+                    {% if request.session.agent %}
+                    <a href="{% url 'add_tour' %}" class="nav-item nav-link">Add-Tour</a>
+                    <a href="{% url 'view_tour' %}" class="nav-item nav-link active">View-Tour</a>
+                    <a href="{% url 'guides' %}" class="nav-item nav-link">Add-Guides</a>
+                    {% else %}
+                    <a href="{% url 'services' %}" class="nav-item nav-link">Services</a>
+                    <a href="{% url 'packages' %}" class="nav-item nav-link">Packages</a>
+                    <a href="{% url 'blog' %}" class="nav-item nav-link">Blog</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu m-0">
+                            <a href="{% url 'destination' %}" class="dropdown-item">Destination</a>
+                            <a href="{% url 'tour' %}" class="dropdown-item">Explore Tour</a>
+                            <a href="{% url 'booking' %}" class="dropdown-item">Travel Booking</a>
+                            <a href="{% url 'gallery' %}" class="dropdown-item">Our Gallery</a>
+                            <a href="{% url 'guides' %}" class="dropdown-item">Travel Guides</a>
+                            <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
+                            <a href="{% url '404' %}" class="dropdown-item">404 Page</a>
+                        </div>
+                    </div>
+                    <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+                    {% endif %}
+                </div>
+                <a href="" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
+            </div>
+        </nav>
+        
+        <!-- Page Header Banner -->
+        <div class="page-header-banner">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    
+                </nav>
+                <br> <br>
+                <h2 class="text-white fw-bold mb-1">All Tours</h2>
+                <p class="text-white-50 mb-0">Browse and manage all available tour packages</p>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+
+    <!-- ============================================================
+         TOURS SECTION
+    ============================================================ -->
+    <div class="container py-5">
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="🔍  Search tours...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="national">National</option>
+                        <option value="international">International</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="weekend">Weekend Tour</option>
+                        <option value="holiday">Holiday Tour</option>
+                        <option value="family">Family Tour</option>
+                        <option value="beach">Beach Tour</option>
+                        <option value="adventure">Adventure Tour</option>
+                        <option value="honeymoon">Honeymoon Tour</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100 rounded-pill" onclick="resetFilters()">
+                        <i class="fas fa-redo me-1"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tour Count -->
+        <div class="tour-count">
+            Showing <strong id="tourCount">{{ tours|length }}</strong> tour(s)
+        </div>
+
+        <!-- Tour Cards -->
+        {% if tours %}
+        <div class="row g-4" id="tourGrid">
+            {% for tour in tours %}
+            <div class="col-md-6 col-lg-4 tour-item"
+                 data-category="{{ tour.category }}"
+                 data-type="{{ tour.tour_type }}"
+                 data-title="{{ tour.title|lower }}">
+                <div class="tour-card">
+
+                    <!-- Image -->
+                    <div class="tour-card-img">
+                        {% if tour.image %}
+                        <img src="{{ tour.image.url }}" alt="{{ tour.title }}">
+                        {% else %}
+                        <img src="{% static 'img/package-1.jpg' %}" alt="{{ tour.title }}">
+                        {% endif %}
+                        <span class="badge-category">{{ tour.get_category_display }}</span>
+                        <span class="badge-type">{{ tour.get_tour_type_display }}</span>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="tour-card-body">
+
+                        <div class="tour-title">{{ tour.title }}</div>
+
+                        {% if tour.destination %}
+                        <div class="tour-destination">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ tour.destination.name }}, {{ tour.destination.country }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Meta -->
+                        <div class="tour-meta">
+                            <span><i class="fas fa-clock"></i>{{ tour.duration_days }}D / {{ tour.duration_nights }}N</span>
+                            <span><i class="fas fa-users"></i>Max {{ tour.max_persons }}</span>
+                            <span><i class="fas fa-user"></i>Min {{ tour.min_persons }}</span>
+                        </div>
+
+                        <!-- Rating & Price -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <span class="tour-stars">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= tour.rating %}
+                                            &#9733;
+                                        {% else %}
+                                            &#9734;
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <span class="tour-rating-val">{{ tour.rating }}</span>
+                            </div>
+                            <div class="tour-price">
+                                ₹{{ tour.price_per_person }}
+                                <span>/ person</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Footer — agent ke liye edit/delete, user ke liye book -->
+                    <div class="tour-card-footer">
+                        {% if request.session.agent %}
+                        <a href="{% url 'edit_tour' tour.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_tour' tour.id %}" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                           onclick="return confirm('Delete this tour?')">
+                            <i class="fas fa-trash me-1"></i> Delete
+                        </a>
+                        {% else %}
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            {{ tour.created_at|date:"d M Y" }}
+                        </small>
+                        <a href="#" class="btn btn-sm btn-primary rounded-pill px-3">
+                            <i class="fas fa-ticket-alt me-1"></i> Book Now
+                        </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-map-marked-alt"></i>
+            <h4>No Tours Found</h4>
+            <p>No tour packages have been added yet.</p>
+            {% if request.session.agent %}
+            <a href="{% url 'add_tour' %}" class="btn btn-primary rounded-pill px-4 mt-2">
+                <i class="fas fa-plus me-2"></i> Add First Tour
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+    <!-- Tours Section End -->
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid footer py-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">Get In Touch</h4>
+                        <a href=""><i class="fas fa-home me-2"></i> 123 Street, New York, USA</a>
+                        <a href=""><i class="fas fa-envelope me-2"></i> info@example.com</a>
+                        <a href=""><i class="fas fa-phone me-2"></i> +012 345 67890</a>
+                        <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +012 345 67890</a>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-share fa-2x text-white me-2"></i>
+                            <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">Company</h4>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">Support</h4>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Contact</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
+                        <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item">
+                        <div class="row gy-3 gx-2 mb-4">
+                            <div class="col-xl-6">
+                                <form>
+                                    <div class="form-floating">
+                                        <select class="form-select bg-dark border" id="select1">
+                                            <option value="1">Arabic</option>
+                                            <option value="2">German</option>
+                                            <option value="3">Greek</option>
+                                        </select>
+                                        <label for="select1">English</label>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xl-6">
+                                <form>
+                                    <div class="form-floating">
+                                        <select class="form-select bg-dark border" id="select2">
+                                            <option value="1">USD</option>
+                                            <option value="2">EUR</option>
+                                            <option value="3">INR</option>
+                                            <option value="4">GBP</option>
+                                        </select>
+                                        <label for="select2">$</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <h4 class="text-white mb-3">Payments</h4>
+                        <div class="footer-bank-card">
+                            <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
+                            <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
+                            <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
+                            <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
+                            <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        // Spinner
+        $(window).on('load', function () {
+            if ($('#spinner').length > 0) {
+                $('#spinner').removeClass('show');
+            }
+        });
+
+        // Filter logic
+        function filterTours() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const type = document.getElementById('typeFilter').value;
+
+            const items = document.querySelectorAll('.tour-item');
+            let count = 0;
+
+            items.forEach(item => {
+                const title = item.dataset.title || '';
+                const itemCategory = item.dataset.category || '';
+                const itemType = item.dataset.type || '';
+
+                const matchSearch = title.includes(search);
+                const matchCategory = category === '' || itemCategory === category;
+                const matchType = type === '' || itemType === type;
+
+                if (matchSearch && matchCategory && matchType) {
+                    item.style.display = 'block';
+                    count++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            document.getElementById('tourCount').textContent = count;
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            filterTours();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterTours);
+        document.getElementById('categoryFilter').addEventListener('change', filterTours);
+        document.getElementById('typeFilter').addEventListener('change', filterTours);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Travela - My Profile</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bs-primary: #0d3b66;
+            --bs-secondary: #FF6922;
+            --bs-dark: #1B1B1B;
+            --bs-light: #F5F5F5;
+        }
+
+        body { font-family: 'Roboto', sans-serif; background: #f8fafc; }
+
+        /* Spinner */
+        #spinner { opacity:0; visibility:hidden; transition: opacity .5s ease-out, visibility 0s linear .5s; z-index:99999; }
+        #spinner.show { transition: opacity .5s ease-out, visibility 0s linear 0s; visibility:visible; opacity:1; }
+
+        /* Buttons */
+        .btn { font-weight:600; transition:.5s; }
+        .btn-square,.btn-sm-square,.btn-md-square { padding:0; display:flex; align-items:center; justify-content:center; font-weight:normal; border-radius:50%; }
+        .btn-square { width:32px; height:32px; }
+        .btn-sm-square { width:34px; height:34px; }
+        .btn-md-square { width:44px; height:44px; }
+        .btn.btn-primary { background:#0d3b66; border-color:#0d3b66; }
+        .btn.btn-primary:hover { background:#0589b8; border-color:#0589b8; color:#fff !important; }
+
+        /* Topbar */
+        .bg-primary { background-color:#0d3b66 !important; }
+
+        /* Navbar */
+        .navbar-light .navbar-nav .nav-link { font-family:'Roboto',sans-serif; position:relative; padding:20px 15px; color:#333 !important; font-size:16px; font-weight:400; transition:.5s; }
+        .navbar-light .navbar-nav .nav-link:hover,.navbar-light .navbar-nav .nav-link.active { color:#0d3b66 !important; }
+        .navbar-light .navbar-brand h1 { color:#0d3b66; }
+        .navbar .dropdown-toggle::after { border:none; content:"\f107"; font-family:"Font Awesome 5 Free"; font-weight:900; vertical-align:middle; margin-left:8px; }
+        .dropdown .dropdown-menu a:hover { background:#0d3b66; color:#fff; }
+
+        /* Breadcrumb */
+        .bg-breadcrumb {
+            background: linear-gradient(rgba(19,53,123,.65), rgba(19,53,123,.65)), url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1400&q=80');
+            background-position:center center; background-repeat:no-repeat; background-size:cover; background-attachment:fixed;
+            padding:150px 0 50px 0;
+        }
+        .bg-breadcrumb .breadcrumb-item a { color:#FF6922 !important; }
+
+        /* Footer */
+        .footer { background:#1B1B1B; }
+        .footer .footer-item a { line-height:30px; color:#fff; transition:0.5s; text-decoration:none; }
+        .footer .footer-item a:hover { letter-spacing:2px; color:#0d3b66; }
+        .copyright { border-top:1px solid rgba(255,255,255,0.08); background:#1B1B1B !important; }
+        .copyright a { color:#fff; text-decoration:none; }
+
+        /* Back to top */
+        .back-to-top { position:fixed; right:30px; bottom:30px; display:flex; width:45px; height:45px; align-items:center; justify-content:center; transition:0.5s; z-index:99; text-decoration:none; }
+
+        /* ===== PROFILE PAGE ===== */
+        .profile-avatar-wrap { position:relative; display:inline-block; }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;   
+            border: 4px solid rgba(255,255,255,0.6);
+            margin: 0 auto;
+            background-color: white;
+        }
+
+        .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top; 
+        border-radius: 50%;
+        background-color: white;
+        }
+
+        .profile-avatar-badge {
+            position:absolute; bottom:6px; right:6px; width:30px; height:30px;
+            border-radius:50%; background:#fff; color:#0d3b66;
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.7rem; border:2px solid #0d3b66; cursor:pointer;
+        }
+
+        .profile-sidebar {
+            background:linear-gradient(160deg, #0d3b66 0%, #0565a0 100%);
+            border-radius:16px; color:#fff; padding:2rem 1.5rem;
+        }
+        .profile-sidebar .nav-link {
+            color:rgba(255,255,255,0.75); border-radius:8px;
+            padding:0.65rem 1rem; margin-bottom:4px; font-weight:500; transition:0.3s;
+            text-decoration:none; display:block;
+        }
+        .profile-sidebar .nav-link:hover,.profile-sidebar .nav-link.active {
+            background:rgba(255,255,255,0.2); color:#fff;
+        }
+
+        .profile-card { border-radius:16px; box-shadow:0 4px 24px rgba(6,163,218,0.09); border:none; background:#fff; }
+
+        .info-label { font-size:0.73rem; text-transform:uppercase; letter-spacing:0.08em; color:#aaa; font-weight:600; margin-bottom:2px; }
+        .info-value { font-size:1rem; font-weight:500; color:#222; }
+        .info-row { padding:0.85rem 0; border-bottom:1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom:none; }
+
+        .stat-box { background:#f8fafc; border-radius:12px; padding:1rem 0.5rem; text-align:center; border:1px solid #eef2f7; }
+        .stat-box .stat-number { font-size:1.6rem; font-weight:700; color:#0d3b66; line-height:1; }
+        .stat-box .stat-label { font-size:0.75rem; color:#aaa; margin-top:4px; }
+
+        .section-card-title { font-size:0.85rem; font-weight:700; color:#0d3b66; text-transform:uppercase; letter-spacing:0.06em; padding-bottom:0.7rem; margin-bottom:1.2rem; border-bottom:2px solid #e1f5fd; display:block; }
+
+        .trip-badge { display:inline-flex; align-items:center; gap:6px; background:#e1f5fd; color:#0d3b66; border-radius:20px; padding:5px 14px; font-size:0.82rem; font-weight:600; margin:3px; }
+
+        .edit-btn { border-radius:8px; padding:0.45rem 1.3rem; font-weight:600; }
+
+        @media (max-width:768px) {
+            .profile-sidebar { border-radius:12px; margin-bottom:1.5rem; }
+            .navbar-light .navbar-nav .nav-link { padding:10px 0; }
+            .bg-breadcrumb { background-attachment: scroll; padding: 100px 0 40px 0; }
+        }
+
+        #profileImg:hover {
+         transform: scale(1.05);
+        transition: 0.3s;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    
+    <!-- Breadcrumb -->
+    <div class="container-fluid bg-breadcrumb">
+        <div class="container text-center py-5" style="max-width:900px;">
+            <h3 class="text-white display-3 mb-4" style="font-family:'Jost',sans-serif;">My Profile</h3>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'index'%}">Home</a></li>
+                <li class="breadcrumb-item active text-white">My Profile</li>
+
+
+            </ol>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="container-fluid py-5">
+        <div class="container py-3">
+            <div class="row g-4">
+
+                <!-- Sidebar -->
+                <div class="col-lg-3">
+                    <div class="profile-sidebar text-center mb-4">
+
+                        <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <div class="profile-avatar-wrap mx-auto mb-3">
+
+                                <!-- Profile Image -->
+                                <div class="profile-avatar">
+                                    <img src="{{ user.profile_img.url }}" alt="">
+
+                                </div>
+
+                                <!-- Camera Click -->
+                                <div class="profile-avatar-badge" 
+                                    title="Change your photo"
+                                    onclick="document.getElementById('profileInput').click();">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+
+                                <!-- Hidden File Input -->
+                                <input type="file" 
+                                    name="profile_img" 
+                                    id="profileInput" 
+                                    style="display:none;" 
+                                    onchange="this.form.submit()">
+
+                            </div>
+
+                        </form>
+                        <h5 class="text-white mb-1 fw-bold" style="font-family:'Jost',sans-serif;">{{user.fname}} {{user.lname}}</h5>
+                        <span class="d-inline-block mb-3 px-3 py-1 rounded-pill" style="background:rgba(255,255,255,0.2);color:#fff;font-size:0.78rem;font-weight:600;">
+                        </span>
+                        <div class="mt-2 text-start">
+                            <ul class="nav flex-column" style="list-style:none;padding:0;margin:0;">
+                                <li><a href="#personal-info" class="nav-link active"><i class="fas fa-user me-2"></i> Personal Info</a></li>
+                                <li><a href="#bookings" class="nav-link"><i class="fas fa-suitcase me-2"></i> My Bookings</a></li>
+                                <li><a href="#wishlist" class="nav-link"><i class="fas fa-heart me-2"></i> Wishlist</a></li>
+                                <li><a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-power-off me-2"></i> Log Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="row g-2">
+                        <div class="col-6"><div class="stat-box"><div class="stat-number">12</div><div class="stat-label">Trips Taken</div></div></div>
+                        <div class="col-6"><div class="stat-box"><div class="stat-number">8</div><div class="stat-label">Wishlist</div></div></div>
+                        <div class="col-6"><div class="stat-box"><div class="stat-number">5</div><div class="stat-label">Reviews</div></div></div>
+                        <div class="col-6"><div class="stat-box"><div class="stat-number">3</div><div class="stat-label">Upcoming</div></div></div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <!-- Personal Information -->
+                    <div id="personal-info" class="profile-card card p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div style="font-size:0.85rem;font-weight:700;color:#0d3b66;text-transform:uppercase;letter-spacing:0.06em;">
+                                <i class="fas fa-id-card me-2"></i> Personal Information
+                            </div>
+                            <button class="btn btn-primary edit-btn btn-sm" onclick="toggleEdit()">
+                                <i class="fas fa-edit me-1"></i> Edit Profile
+                            </button>
+                        </div>
+                        <hr style="border-color:#e1f5fd;border-width:2px;">
+
+                        <!-- View Mode --> 
+
+                        <div id="view-mode">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">First Name</div>
+                                       
+                                        <div class="info-value">
+                                            {{user.fname}} 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Last Name</div>
+                                        <div class="info-value">
+                                            {{user.lname}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Email Address</div>
+                                        <div class="info-value">
+                                            {{user.email}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Phone Number</div>
+                                        <div class="info-value">
+                                            {{user.mobile_number}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Country</div>
+                                        <div class="info-value">
+                                            {{user.country}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <!-- 
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">City</div>
+                                        <div class="info-value">Ahmedabad, Gujarat</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Date of Birth</div>
+                                        <div class="info-value">15 August 1995</div>
+                                    </div>
+                                </div>
+
+                                Comment mode -->
+
+                            </div>
+                        </div>
+
+
+                        <!-- Edit Mode -->
+                    <form  method="POST" action="{% url 'profile'%}" enctype="multipart/form-data">
+                          {% csrf_token %} 
+                        <div id="edit-mode" style="display:none;">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">First Name</label>
+                                    <input type="text" name="fname" class="form-control" value="{{user.fname}}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">Last Name</label>
+                                    <input type="text" name="lname" class="form-control" value="{{user.lname}}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">Email Address</label>
+                                    <input type="email" name="email" class="form-control" value="{{user.email}}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">Phone Number</label>
+                                    <input type="tel" name="mobile_number" class="form-control" value="{{user.mobile_number}}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">Country</label>
+                                    <select name="country" class="form-select">
+                                         {% for c in countries %}
+                                    <option value="{{ c }}" {% if user.country == c %}selected{% endif %}>
+                                            {{ c }}
+                                    </option>
+                                {% endfor %}
+                                    </select>
+
+                                </div>
+
+                                
+
+                            <!-- 
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">City</label>
+                                    <input type="text" class="form-control" value="Ahmedabad, Gujarat">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="info-label mb-1">Date of Birth</label>
+                                    <input type="date" class="form-control" value="1995-08-15">
+                                </div>
+                                <div class="col-12">
+                                    <label class="info-label mb-1">About Me</label>
+                                    <textarea class="form-control" rows="3">Passionate traveler who loves exploring new destinations, experiencing local culture, and creating unforgettable memories around the world.</textarea>
+                                </div>
+
+                                -->
+                                <div class="col-12 d-flex gap-2 mt-1">
+                                    <button type="submit" class="btn btn-primary edit-btn"><i class="fas fa-save me-1"></i> Save Changes</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                    
+
+                
+                </div>
+
+                
+
+                    <!-- Recent Bookings -->
+                    <div id="bookings" class="profile-card card p-4 mb-4">
+                        <span class="section-card-title"><i class="fas fa-suitcase me-2"></i> Recent Bookings</span>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Destination</th>
+                                        <th>Date</th>
+                                        <th>Travelers</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><i class="fas fa-map-marker-alt me-2" style="color:#0d3b66;"></i><strong>Bali, Indonesia</strong></td>
+                                        <td>Mar 15, 2026</td>
+                                        <td>2</td>
+                                        <td>$1,250</td>
+                                        <td><span class="badge bg-success rounded-pill px-3">Confirmed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-map-marker-alt me-2" style="color:#0d3b66;"></i><strong>Paris, France</strong></td>
+                                        <td>Jan 08, 2026</td>
+                                        <td>1</td>
+                                        <td>$2,100</td>
+                                        <td><span class="badge rounded-pill px-3" style="background:#0d3b66;">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-map-marker-alt me-2" style="color:#0d3b66;"></i><strong>Dubai, UAE</strong></td>
+                                        <td>Nov 20, 2025</td>
+                                        <td>3</td>
+                                        <td>$3,400</td>
+                                        <td><span class="badge rounded-pill px-3" style="background:#0d3b66;">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-map-marker-alt me-2" style="color:#0d3b66;"></i><strong>Maldives</strong></td>
+                                        <td>May 10, 2026</td>
+                                        <td>2</td>
+                                        <td>$4,800</td>
+                                        <td><span class="badge bg-warning text-dark rounded-pill px-3">Upcoming</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Favourite Destinations -->
+                    <div id="wishlist" class="profile-card card p-4">
+                        <span class="section-card-title"><i class="fas fa-heart me-2"></i> Favourite Destinations</span>
+                        <div>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Santorini, Greece</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Kyoto, Japan</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> New York, USA</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Swiss Alps</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Cape Town, SA</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Phuket, Thailand</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Rome, Italy</span>
+                            <span class="trip-badge"><i class="fas fa-map-marker-alt"></i> Barcelona, Spain</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Copyright -->
+    <div class="container-fluid copyright text-body py-4">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-6 text-center text-md-end mb-md-0">
+                    <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travela</a>, All right reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Spinner hide on load
+        window.addEventListener('load', function() {
+            document.getElementById('spinner').classList.remove('show');
+        });
+
+        // Toggle Edit
+        function toggleEdit() {
+            var v = document.getElementById('view-mode');
+            var e = document.getElementById('edit-mode');
+            if (e.style.display === 'none') { v.style.display='none'; e.style.display='block'; }
+            else { v.style.display='block'; e.style.display='none'; }
+        }
+
+        function saveProfile() {
+            alert('✅ Profile save ho gaya!');
+            toggleEdit();
+        }
+
+        // Sidebar active
+        document.querySelectorAll('.profile-sidebar .nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.profile-sidebar .nav-link').forEach(function(l) { l.classList.remove('active'); });
+                this.classList.add('active');
+            });
+        });
+
+        function openFile() {
+    document.getElementById("profileInput").click();
+}
+
+document.getElementById("profileInput").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+
+    if (file) {
+        const imageURL = URL.createObjectURL(file);
+
+        // preview update
+        document.querySelector(".profile-avatar img").src = imageURL;
+    }
+});
+
+    const profileImg = document.getElementById("profileImg");
+    const modal = document.getElementById("imgModal");
+    const fullImg = document.getElementById("fullImg");
+
+    profileImg.onclick = function() {
+        modal.style.display = "block";
+        fullImg.src = this.src;
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    </script>
+</body>
+</html>
