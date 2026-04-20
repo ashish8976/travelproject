@@ -47,4 +47,5 @@ urlpatterns = [
     path('delete_tour/<int:pk>/',views.delete_tour,name='delete_tour'),
     path('update_tour/<int:pk>/',views.update_tour,name='update_tour'),
     
+    
 ]

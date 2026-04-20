@@ -10,6 +10,7 @@ import pycountry
 from . form import TourForm
 from . models import Destination
 from .models import Tour, Destination
+from django.shortcuts import get_object_or_404, render, redirect
 
 # Create your views here.
 
@@ -81,12 +82,27 @@ def view_tour(request):
     return render(request, 'view_tour.html', {'tours': tours})
 
 
-def edit_tour(request):
-    return render(request, 'edit_tour.html')
+def edit_tour(request,pk):
+    tour = get_object_or_404(Tour, id=pk)
+    if request.method == 'POST':
+        form = TourForm(request.POST, request.FILES, instance=tour)
+        if form.is_valid():
+            form.save()
+            return redirect('view_tour')
+    else:
+        form = TourForm(instance=tour)
+    return render(request, 'edit_tour.html', {
+        'form': form,
+        'tour': tour,
+        'destinations': Destination.objects.all()
+    })
 
 
-def delete_tour(request):
-    return render(request, 'delete_tour.html')
+def delete_tour(request, pk):
+    tour = get_object_or_404(Tour, id=pk)
+    tour.delete()
+    return redirect('view_tour')
+
 
 def update_tour(request):
     return render(request, 'update_tour.html')
