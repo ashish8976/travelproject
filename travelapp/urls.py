@@ -27,6 +27,7 @@ urlpatterns = [
     path('gallery/',views.gallery,name='gallery'),
     path('booking/',views.booking,name='booking'),
     path('tour/',views.tour,name='tour'),
+    path('tour_details',views.tour_details,name="tour_details"),
     path('index/',views.index,name='index'),
     path('about/',views.about,name='about'),
     path('register/',views.register,name='register'),

@@ -95,10 +95,11 @@ def edit_tour(request,pk):
     })
 
 def packages(request):
-   
     tours = Tour.objects.all()
     return render(request,'packages.html', {'tours': tours})
 
+def tour_details(request):
+    return render(request, 'tour_details.html')
 
 def delete_tour(request, pk):
     tour = get_object_or_404(Tour, id=pk)

@@ -2,16 +2,15 @@
 {% load static %}
 {% block container %}
 
-
         <!-- Header Start -->
         <div class="container-fluid bg-breadcrumb">
             <div class="container text-center py-5" style="max-width: 900px;">
-                <h3 class="text-white display-3 mb-4">Travel Packages</h1>
+                <h3 class="text-white display-3 mb-4">Travel Packages</h3>
                 <ol class="breadcrumb justify-content-center mb-0">
-                    <li class="breadcrumb-item"><a href="{% url  'index'%}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
                     <li class="breadcrumb-item"><a href="#">Pages</a></li>
                     <li class="breadcrumb-item active text-white">Packages</li>
-                </ol>    
+                </ol>
             </div>
         </div>
         <!-- Header End -->
@@ -23,45 +22,95 @@
                     <h5 class="section-title px-3">Packages</h5>
                     <h1 class="mb-0">Awesome Packages</h1>
                 </div>
+
                 {% if tours %}
-                <div class="packages-carousel owl-carousel">
+                <div class="row g-4">
                     {% for i in tours %}
-                    <div class="packages-item">
-                        <div class="packages-img">
-                            <img src="{{ i.image.url }}" class="img-fluid w-100 rounded-top" alt="Image">
-                            <div class="packages-info d-flex border border-start-0 border-end-0 position-absolute" style="width: 100%; bottom: 0; left: 0; z-index: 5;">
-                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-map-marker-alt me-2"></i>{{i.title}} -- {{i.destination.name}}</small>
-                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt me-2"></i>{{i.duration_days}}</small>
-                                <small class="flex-fill text-center py-2"><i class="fa fa-user me-2"></i>{{i.max_persons}}</small>
-                            </div>
-                            <div class="packages-price py-2 px-4">{{i.price_per_person}}</div>
-                        </div>
-                        <div class="packages-content bg-light">
-                            <div class="p-4 pb-0">
-                                <h5 class="mb-0">Discover {{i.destination.country}}</h5>
-                                <small class="text-uppercase">Hotel Deals</small>
-                                <div class="mb-3">
-                                    <small class="fa fa-star text-primary"></small>
-                                    <small class="fa fa-star text-primary"></small>
-                                    <small class="fa fa-star text-primary"></small>
-                                    <small class="fa fa-star text-primary"></small>
-                                    <small class="fa fa-star text-primary"></small>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="packages-item h-100 d-flex flex-column" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            
+                            <!-- Image Section -->
+                            <div class="packages-img position-relative" style="height: 220px; overflow: hidden;">
+                                <img src="{{ i.image.url }}" 
+                                     class="w-100 h-100" 
+                                     alt="{{ i.title }}"
+                                     style="object-fit: cover;">
+                                
+                                <!-- Price Badge -->
+                                <div class="packages-price py-2 px-4 position-absolute" style="top: 15px; right: 15px; background: #06A3DA; color: white; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                                    ₹{{ i.price_per_person }}
                                 </div>
-                                <p class="mb-4">{{i.description}}</p>
-                            </div>
-                            <div class="row bg-primary rounded-bottom mx-0">
-                                <div class="col-6 text-start px-0">
-                                    <a href="#" class="btn-hover btn text-white py-2 px-4">Read More</a>
+
+                                <!-- Tour Type Badge -->
+                                <div class="position-absolute" style="top: 15px; left: 15px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px;">
+                                    {{ i.get_tour_type_display }}
                                 </div>
-                                <div class="col-6 text-end px-0">
-                                    <a href="#" class="btn-hover btn text-white py-2 px-4">Book Now</a>
+
+                                <!-- Bottom Info Bar -->
+                                <div class="packages-info d-flex position-absolute w-100" style="bottom: 0; left: 0; background: rgba(0,0,0,0.65); color: white;">
+                                    <small class="flex-fill text-center border-end py-2 text-white">
+                                        <i class="fa fa-map-marker-alt me-1"></i>{{ i.destination.name }}
+                                    </small>
+                                    <small class="flex-fill text-center border-end py-2 text-white">
+                                        <i class="fa fa-calendar-alt me-1"></i>{{ i.duration_days }}D / {{ i.duration_nights }}N
+                                    </small>
+                                    <small class="flex-fill text-center py-2 text-white">
+                                        <i class="fa fa-user me-1"></i>Max {{ i.max_persons }}
+                                    </small>
                                 </div>
                             </div>
+
+                            <!-- Content Section -->
+                            <div class="packages-content bg-light flex-grow-1 d-flex flex-column">
+                                <div class="p-4 pb-0 flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h5 class="mb-0">{{ i.title }}</h5>
+                                        <span class="badge" style="background: #06A3DA; font-size: 11px;">{{ i.get_category_display }}</span>
+                                    </div>
+                                    <small class="text-uppercase text-muted">{{ i.destination.name }} — {{ i.destination.country }}</small>
+                                    
+                                    <!-- Dynamic Star Rating -->
+                                    <div class="mb-2 mt-2">
+                                        {% with i.rating|floatformat:0 as rating_int %}
+                                        {% for star in "12345" %}
+                                            {% if forloop.counter <= rating_int|add:"0" %}
+                                                <small class="fa fa-star text-primary"></small>
+                                            {% else %}
+                                                <small class="fa fa-star text-muted"></small>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% endwith %}
+                                        <small class="text-muted ms-1">({{ i.rating }})</small>
+                                    </div>
+
+                                    <p class="mb-3 text-muted" style="font-size: 14px; line-height: 1.5;">
+                                        {{ i.description|truncatewords:15 }}
+                                    </p>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="row bg-primary rounded-bottom mx-0 mt-auto">
+                                    <div class="col-6 text-start px-0">
+                                        <a href="#" class="btn-hover btn text-white py-2 px-4">Read More</a>
+                                    </div>
+                                    <div class="col-6 text-end px-0">
+                                        <a href="#" class="btn-hover btn text-white py-2 px-4">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-                 {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fa fa-suitcase fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Packages</h4>
+                </div>
+                {% endif %}
+
             </div>
         </div>
         <!-- Packages End -->
@@ -73,15 +122,13 @@
                     <div class="col-lg-6">
                         <h5 class="section-booking-title pe-3">Booking</h5>
                         <h1 class="text-white mb-4">Online Booking</h1>
-                        <p class="text-white mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maxime ullam esse fuga blanditiis accusantium pariatur quis sapiente, veniam doloribus praesentium? Repudiandae iste voluptatem fugiat doloribus quasi quo iure officia.
-                        </p>
-                        <p class="text-white mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maxime ullam esse fuga blanditiis accusantium pariatur quis sapiente, veniam doloribus praesentium? Repudiandae iste voluptatem fugiat doloribus quasi quo iure officia.
-                        </p>
+                        <p class="text-white mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maxime ullam esse fuga blanditiis accusantium pariatur quis sapiente, veniam doloribus praesentium?</p>
+                        <p class="text-white mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maxime ullam esse fuga blanditiis accusantium pariatur quis sapiente, veniam doloribus praesentium?</p>
                         <a href="#" class="btn btn-light text-primary rounded-pill py-3 px-5 mt-2">Read More</a>
                     </div>
                     <div class="col-lg-6">
                         <h1 class="text-white mb-3">Book A Tour Deals</h1>
-                        <p class="text-white mb-4">Get <span class="text-warning">50% Off</span> On Your First Adventure Trip With Travela. Get More Deal Offers Here.</p>
+                        <p class="text-white mb-4">Get <span class="text-warning">50% Off</span> On Your First Adventure Trip With Travela.</p>
                         <form>
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -128,7 +175,7 @@
                                             <option value="1">Kids</option>
                                             <option value="2">1</option>
                                             <option value="3">2</option>
-                                            <option value="3">3</option>
+                                            <option value="4">3</option>
                                         </select>
                                         <label for="CategoriesSelect">Categories</label>
                                     </div>
@@ -149,15 +196,14 @@
             </div>
         </div>
         <!-- Tour Booking End -->
-        
+
         <!-- Subscribe Start -->
         <div class="container-fluid subscribe py-5">
             <div class="container text-center py-5">
                 <div class="mx-auto text-center" style="max-width: 900px;">
                     <h5 class="subscribe-title px-3">Subscribe</h5>
                     <h1 class="text-white mb-4">Our Newsletter</h1>
-                    <p class="text-white mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
-                    </p>
+                    <p class="text-white mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
                     <div class="position-relative mx-auto">
                         <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
                         <button type="button" class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
@@ -215,26 +261,25 @@
                                 <div class="col-xl-6">
                                     <form>
                                         <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="select1">
+                                            <select class="form-select bg-dark border" id="langSelect">
                                                 <option value="1">Arabic</option>
                                                 <option value="2">German</option>
                                                 <option value="3">Greek</option>
-                                                <option value="3">New York</option>
                                             </select>
-                                            <label for="select1">English</label>
+                                            <label for="langSelect">English</label>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="col-xl-6">
                                     <form>
                                         <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="select1">
+                                            <select class="form-select bg-dark border" id="currSelect">
                                                 <option value="1">USD</option>
                                                 <option value="2">EUR</option>
                                                 <option value="3">INR</option>
-                                                <option value="3">GBP</option>
+                                                <option value="4">GBP</option>
                                             </select>
-                                            <label for="select1">$</label>
+                                            <label for="currSelect">$</label>
                                         </div>
                                     </form>
                                 </div>
@@ -254,7 +299,7 @@
             </div>
         </div>
         <!-- Footer End -->
-        
+
         <!-- Copyright Start -->
         <div class="container-fluid copyright text-body py-4">
             <div class="container">
@@ -263,11 +308,7 @@
                         <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Your Site Name</a>, All right reserved.
                     </div>
                     <div class="col-md-6 text-center text-md-start">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
                         Designed By <a class="text-white" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a href="https://themewagon.com">ThemeWagon</a>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -275,9 +316,8 @@
         <!-- Copyright End -->
 
         <!-- Back to Top -->
-        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
 
-        
         <!-- JavaScript Libraries -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -285,11 +325,7 @@
         <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
         <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
         <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
-        
-
-        <!-- Template Javascript -->
         <script src="{% static 'js/main.js' %}"></script>
     </body>
 
-     {% endblock %}
-</html>
+{% endblock %}
