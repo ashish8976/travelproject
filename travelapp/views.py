@@ -10,7 +10,7 @@ import pycountry
 from . form import TourForm
 from . models import Destination
 from .models import Tour, Destination
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -43,9 +43,6 @@ def about(request):
 
 def services(request):
     return render(request,'services.html')
-
-def packages(request):
-    return render(request,'packages.html')
 
 def blog(request):
     return render(request,'blog.html')
@@ -96,6 +93,11 @@ def edit_tour(request,pk):
         'tour': tour,
         'destinations': Destination.objects.all()
     })
+
+def packages(request):
+   
+    tours = Tour.objects.all()
+    return render(request,'packages.html', {'tours': tours})
 
 
 def delete_tour(request, pk):
@@ -151,7 +153,6 @@ def register(request):
                     role = request.POST['role'],
                     profile_img = request.FILES['profile_img'],
                 )
-                
                 msg = "Signup Successfully !!"
                 return render (request, "login.html",{'msg':msg})
             else:
@@ -201,7 +202,7 @@ def forget_password(request):
             otp = random.randint(100001,999999)
 
             subject = "OTP for forget password"
-            message =f"Hi {user.fname}  {user.lname}  Your OTP  is { str(otp)}"
+            message =f"Hi {user.fname}  {user.lname}  Your OTP  is {str(otp)}"
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [user.email,]
             send_mail(
@@ -211,6 +212,7 @@ def forget_password(request):
                 recipient_list,
                 fail_silently=False
             )
+
             request.session['useremail'] = user.email
             request.session['otp'] = str(otp)
             request.session['otp_time'] = time.time()
@@ -220,6 +222,7 @@ def forget_password(request):
             return render (request, 'forget_password.html',{'msg':msg})
     else:
         return render(request,'forget_password.html')
+
 
 def update_password(request):
     if request.method == 'POST':
@@ -245,7 +248,6 @@ def update_password(request):
 
 def otp(request):
     if request.method == "POST":
-        
           #   user = User.objects.get(email = request.session['newemail'])
             entered_otp = request.POST.get('uotp')
             session_otp = request.session.get('otp')
@@ -295,14 +297,4 @@ def resetpassword(request):
             return render(request,'forget_password.html')
     else:
         return render(request,'resetpassword.html')
-    
-
-
-    
-
-
- 
-
-
-
 
