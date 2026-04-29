@@ -91,10 +91,27 @@
                                 <!-- Buttons -->
                                 <div class="row bg-primary rounded-bottom mx-0 mt-auto">
                                     <div class="col-6 text-start px-0">
-                                        <a href="#" class="btn-hover btn text-white py-2 px-4">Read More</a>
+                                        <!-- READ MORE BUTTON - Modal trigger with all package data -->
+                                        <a href="#"
+                                           class="btn-hover btn text-white py-2 px-4"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#packageModal"
+                                           data-title="{{ i.title }}"
+                                           data-destination="{{ i.destination.name }} — {{ i.destination.country }}"
+                                           data-price="{{ i.price_per_person }}"
+                                           data-duration="{{ i.duration_days }}D / {{ i.duration_nights }}N"
+                                           data-max="{{ i.max_persons }}"
+                                           data-description="{{ i.description }}"
+                                           data-image="{{ i.image.url }}"
+                                           data-tour="{{ i.get_tour_type_display }}"
+                                           data-category="{{ i.get_category_display }}"
+                                           data-rating="{{ i.rating|floatformat:0 }}"
+                                           onclick="fillModal(this)">
+                                            Read More
+                                        </a>
                                     </div>
                                     <div class="col-6 text-end px-0">
-                                        <a href="#" class="btn-hover btn text-white py-2 px-4">Book Now</a>
+                                        <a href="{% url 'booking' %}" class="btn-hover btn text-white py-2 px-4">Book Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -114,6 +131,110 @@
             </div>
         </div>
         <!-- Packages End -->
+
+        <!-- ===================== PACKAGE DETAIL MODAL ===================== -->
+        <div class="modal fade" id="packageModal" tabindex="-1" aria-labelledby="packageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none;">
+
+                    <!-- Modal Image Header -->
+                    <div style="position: relative; height: 260px; overflow: hidden; flex-shrink: 0;">
+                        <img id="modal-image" src="" alt="Package Image" style="width: 100%; height: 100%; object-fit: cover;">
+
+                        <!-- Dark overlay for text readability -->
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);"></div>
+
+                        <!-- Tour Type Badge -->
+                        <div style="position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); color: white; padding: 5px 14px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(255,255,255,0.3);">
+                            <i class="fa fa-tag me-1"></i>
+                            <span id="modal-tour"></span>
+                        </div>
+
+                        <!-- Price Badge -->
+                        <div style="position: absolute; top: 16px; right: 56px; background: #06A3DA; color: white; padding: 6px 18px; border-radius: 8px; font-weight: 700; font-size: 18px;">
+                            ₹<span id="modal-price"></span>
+                            <span style="font-size: 11px; font-weight: 400;">/person</span>
+                        </div>
+
+                        <!-- Close Button -->
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            style="position: absolute; top: 14px; right: 14px; background-color: rgba(0,0,0,0.4); padding: 10px; border-radius: 50%; opacity: 1;">
+                        </button>
+
+                        <!-- Title on image -->
+                        <div style="position: absolute; bottom: 16px; left: 20px; right: 20px;">
+                            <h4 id="modal-title" style="color: white; margin: 0; font-size: 22px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.5);"></h4>
+                            <small id="modal-destination" style="color: rgba(255,255,255,0.85); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <i class="fa fa-map-marker-alt me-1"></i>
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body p-4">
+
+                        <!-- Category + Stars Row -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span id="modal-category" class="badge" style="background: #06A3DA; font-size: 13px; padding: 6px 14px;"></span>
+                            <div id="modal-stars"></div>
+                        </div>
+
+                        <!-- Info Cards: Duration / Max People / Price -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <div class="text-center p-3 rounded" style="background: #f0f6ff; border: 1px solid #d0e4ff;">
+                                    <div style="font-size: 22px; color: #06A3DA; margin-bottom: 4px;">
+                                        <i class="fa fa-calendar-alt"></i>
+                                    </div>
+                                    <div style="font-size: 11px; color: #888; margin-bottom: 2px;">Duration</div>
+                                    <div id="modal-duration" style="font-weight: 700; color: #1a3c6e; font-size: 14px;"></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-center p-3 rounded" style="background: #f0f6ff; border: 1px solid #d0e4ff;">
+                                    <div style="font-size: 22px; color: #06A3DA; margin-bottom: 4px;">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <div style="font-size: 11px; color: #888; margin-bottom: 2px;">Max People</div>
+                                    <div id="modal-max" style="font-weight: 700; color: #1a3c6e; font-size: 14px;"></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-center p-3 rounded" style="background: #f0f6ff; border: 1px solid #d0e4ff;">
+                                    <div style="font-size: 22px; color: #06A3DA; margin-bottom: 4px;">
+                                        <i class="fa fa-rupee-sign"></i>
+                                    </div>
+                                    <div style="font-size: 11px; color: #888; margin-bottom: 2px;">Price/Person</div>
+                                    <div id="modal-price2" style="font-weight: 700; color: #1a3c6e; font-size: 14px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr style="border-color: #e8edf5; margin: 0 0 16px 0;">
+
+                        <!-- Description -->
+                        <h6 style="color: #1a3c6e; font-weight: 700; margin-bottom: 8px;">
+                            <i class="fa fa-info-circle me-2" style="color: #06A3DA;"></i>About This Tour
+                        </h6>
+                        <p id="modal-description" style="color: #555; line-height: 1.8; font-size: 14px; margin-bottom: 0;"></p>
+
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer" style="border-top: 1px solid #e8edf5; padding: 16px 24px; background: #f8faff;">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                            <i class="fa fa-times me-1"></i> Close
+                        </button>
+                        <a href="{% url 'booking' %}" class="btn btn-primary rounded-pill px-5" style="background: #06A3DA; border: none;">
+                            <i class="fa fa-calendar-check me-1"></i> Book Now
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- ===================== MODAL END ===================== -->
 
         <!-- Tour Booking Start -->
         <div class="container-fluid booking py-5">
@@ -326,6 +447,40 @@
         <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
         <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+
+        <!-- Modal Fill Script -->
+        <script>
+            function fillModal(btn) {
+                // Basic info
+                document.getElementById('modal-title').innerText       = btn.getAttribute('data-title');
+                document.getElementById('modal-price').innerText       = btn.getAttribute('data-price');
+                document.getElementById('modal-price2').innerText      = '₹' + btn.getAttribute('data-price');
+                document.getElementById('modal-duration').innerText    = btn.getAttribute('data-duration');
+                document.getElementById('modal-max').innerText         = 'Max ' + btn.getAttribute('data-max');
+                document.getElementById('modal-description').innerText = btn.getAttribute('data-description');
+                document.getElementById('modal-image').src             = btn.getAttribute('data-image');
+                document.getElementById('modal-tour').innerText        = btn.getAttribute('data-tour');
+                document.getElementById('modal-category').innerText    = btn.getAttribute('data-category');
+
+                // Destination with icon
+                document.getElementById('modal-destination').innerHTML =
+                    '<i class="fa fa-map-marker-alt me-1"></i>' + btn.getAttribute('data-destination');
+
+                // Star rating
+                var rating = parseInt(btn.getAttribute('data-rating')) || 0;
+                var starsHtml = '';
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        starsHtml += '<i class="fa fa-star text-warning" style="font-size:16px;"></i> ';
+                    } else {
+                        starsHtml += '<i class="fa fa-star text-muted" style="font-size:16px;"></i> ';
+                    }
+                }
+                starsHtml += '<span class="text-muted ms-1" style="font-size:13px;">(' + btn.getAttribute('data-rating') + ')</span>';
+                document.getElementById('modal-stars').innerHTML = starsHtml;
+            }
+        </script>
+
     </body>
 
 {% endblock %}

@@ -57,6 +57,7 @@ def destination(request):
     return render (request, 'destination.html')
 
 def add_tour(request):
+    
     destinations = Destination.objects.all()
     form = TourForm(request.POST or None, request.FILES or None)
     
@@ -271,8 +272,6 @@ def otp(request):
         return render(request, 'otp.html')
 
 
-
-
 def resetpassword(request):
     if request.method == "POST":
         update_email = request.session.get('useremail')
@@ -298,4 +297,3 @@ def resetpassword(request):
             return render(request,'forget_password.html')
     else:
         return render(request,'resetpassword.html')
-

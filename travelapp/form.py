@@ -27,4 +27,4 @@ class TourForm(forms.ModelForm):
             'price_per_person': forms.NumberInput(attrs={'min': 0, 'step': '0.01'}),
             'rating': forms.HiddenInput(), 
         }
-
+        
