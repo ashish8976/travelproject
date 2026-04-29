@@ -17,16 +17,58 @@
 
         <!-- Packages Start -->
         <div class="container-fluid packages py-5">
+
             <div class="container py-5">
                 <div class="mx-auto text-center mb-5" style="max-width: 900px;">
                     <h5 class="section-title px-3">Packages</h5>
                     <h1 class="mb-0">Awesome Packages</h1>
+                    <h2 class="text-muted">
+                        Showing <span id="tourCount">0</span> tours
+                        </h2>
                 </div>
+
+
+                <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="🔍  Search tours...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="national">National</option>
+                        <option value="international">International</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="weekend">Weekend Tour</option>
+                        <option value="holiday">Holiday Tour</option>
+                        <option value="family">Family Tour</option>
+                        <option value="beach">Beach Tour</option>
+                        <option value="adventure">Adventure Tour</option>
+                        <option value="honeymoon">Honeymoon Tour</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100 rounded-pill" onclick="resetFilters()">
+                        <i class="fas fa-redo me-1"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <br> <br> <br>
 
                 {% if tours %}
                 <div class="row g-4">
                     {% for i in tours %}
-                    <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 tour-item"
+                        data-title="{{ i.title|lower }}"
+                        data-category="{{ i.category }}"
+                        data-type="{{ i.tour_type }}">
                         <div class="packages-item h-100 d-flex flex-column" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                             
                             <!-- Image Section -->
@@ -450,6 +492,54 @@
 
         <!-- Modal Fill Script -->
         <script>
+
+             $(window).on('load', function () {
+            if ($('#spinner').length > 0) {
+                $('#spinner').removeClass('show');
+            }
+        });
+
+        // Filter logic
+        function filterTours() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const type = document.getElementById('typeFilter').value;
+
+    const items = document.querySelectorAll('.tour-item'); // ✅ THIS WAS MISSING
+
+    let count = 0;
+
+    items.forEach(item => {
+        const title = item.dataset.title || '';
+        const itemCategory = item.dataset.category || '';
+        const itemType = item.dataset.type || '';
+
+        const matchSearch = title.includes(search);
+        const matchCategory = category === '' || itemCategory === category;
+        const matchType = type === '' || itemType === type;
+
+        if (matchSearch && matchCategory && matchType) {
+            item.style.display = '';
+            count++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    document.getElementById('tourCount').textContent = count;
+}
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            filterTours();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterTours);
+        document.getElementById('categoryFilter').addEventListener('change', filterTours);
+        document.getElementById('typeFilter').addEventListener('change', filterTours);
+
             function fillModal(btn) {
                 // Basic info
                 document.getElementById('modal-title').innerText       = btn.getAttribute('data-title');
@@ -479,6 +569,11 @@
                 starsHtml += '<span class="text-muted ms-1" style="font-size:13px;">(' + btn.getAttribute('data-rating') + ')</span>';
                 document.getElementById('modal-stars').innerHTML = starsHtml;
             }
+
+            window.onload = function () {
+            filterTours();
+            };
+
         </script>
 
     </body>
