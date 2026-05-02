@@ -1,0 +1,109 @@
+{% extends "header.html" %}
+{% block container %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var spinner = document.getElementById('spinner');
+    if (spinner) {
+      spinner.classList.remove('show');
+    }
+  });
+</script>
+
+<style>
+  .navbar-light { background: #0A3D62 !important; }
+</style>
+<br>
+<br> <br> <br> <br>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-0 shadow rounded-4 p-4">
+        
+        <h4 class="fw-bold text-primary mb-4 text-center">Order Summary</h4>
+        
+        <!-- Tour Info -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <img src="{{ tour.image.url }}" style="width:80px; height:80px; object-fit:cover; border-radius:10px;">
+          <div>
+            <h6 class="fw-bold mb-1">{{ tour.title }}</h6>
+            <small class="text-muted">{{ tour.destination }}</small>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- Details -->
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Persons</span>
+          <span class="fw-semibold">{{ persons }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Price Per Person</span>
+          <span class="fw-semibold">₹{{ tour.price_per_person }}</span>
+        </div>
+
+        <hr>
+
+        <!-- Total -->
+        <div class="d-flex justify-content-between mb-4">
+          <span class="fw-bold fs-5">Total Amount</span>
+          <span class="fw-bold fs-5 text-success">₹{{ total_price }}</span>
+        </div>
+
+        <!-- Pay Button -->
+        <button id="pay-btn" class="btn btn-success btn-lg w-100">
+          💳 Pay ₹{{ total_price }}
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('pay-btn').onclick = function() {
+    var options = {
+      "key": "{{ razorpay_key }}",
+      "amount": "{{ amount_paise }}",
+      "currency": "INR",
+      "name": "Travela",
+      "description": "Tour Booking",
+      "order_id": "{{ razorpay_order_id }}",
+
+      "handler": function(response) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'payment_success' %}";
+
+        var csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = '{{ csrf_token }}';
+        form.appendChild(csrf);
+
+        ['razorpay_payment_id', 'razorpay_order_id', 'razorpay_signature'].forEach(function(k) {
+          var inp = document.createElement('input');
+          inp.type = 'hidden';
+          inp.name = k;
+          inp.value = response[k];
+          form.appendChild(inp);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      },
+
+      "prefill": {
+        "name": "{{ user.fname }} {{ user.lname }}",
+        "email": "{{ user.email }}",
+        "contact": "{{ user.mobile_number }}"
+      },
+      "theme": { "color": "#0A3D62" }
+    };
+    var rzp = new Razorpay(options);
+    rzp.open();
+  };
+</script>
+{% endblock %}

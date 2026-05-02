@@ -9,16 +9,26 @@ import time
 import pycountry
 from . form import TourForm
 from . models import Destination
-from .models import Tour, Destination
+from .models import Tour, Destination, Cart, Booking
 from django.shortcuts import get_object_or_404
-
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from datetime import date
+import razorpay
+from django.conf import settings
+from datetime import date
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def tour(request):
-    return render(request, 'tour.html')
+    national_tours = Tour.objects.filter(category='national')
+    international_tours = Tour.objects.filter(category='international')
+    return render(request, 'tour.html', {
+        'national_tours': national_tours,
+        'international_tours': international_tours,
+    })
 
-def booking(request):
-    return render(request, 'booking.html')
 
 def gallery(request):
     return render(request, 'gallery.html')
@@ -50,13 +60,18 @@ def blog(request):
 def contact(request):
     return render(request,'contact.html')
 
-def booking(request):
-    return render(request,'booking.html')
 
 def destination(request):
-    return render (request, 'destination.html')
+    destinations = Destination.objects.all()
+    countries = destinations.values_list('country', flat=True).distinct()
+    return render(request, 'destination.html', {
+        'destinations': destinations,
+        'countries': countries
+    })
 
 def add_tour(request):
+    if 'email' not in request.session:
+        return redirect('login')
     
     destinations = Destination.objects.all()
     form = TourForm(request.POST or None, request.FILES or None)
@@ -74,13 +89,120 @@ def add_tour(request):
         'destinations': destinations
     })
 
+def add_to_cart(request,id):
+    if 'email' not in request.session:
+        return redirect('login')
+
+    if request.method == "POST":
+        tour_id = request.POST.get('tour_id')
+        tour_date = request.POST.get('tour_date')
+        persons = int(request.POST.get('persons', 1))
+        tour = Tour.objects.get(id=tour_id)
+        user = User.objects.get(email=request.session['email'])
+        total = tour.price_per_person * persons
+        Cart.objects.create(
+            user = user,
+            tour = tour,
+            tour_date = tour_date,
+            tour_quantity = persons,
+            tour_price = tour.price_per_person,
+            total_price = total
+        )
+        return redirect('booking_success', id)
+
+def booking(request, tour_id):
+    if 'email' not in request.session:
+        return redirect('login')
+    
+    tour = get_object_or_404(Tour, id=tour_id)
+    return render(request, 'booking.html', {
+        'tour': tour,
+        'today': date.today().isoformat()  # date picker mein past date disable hoga
+    })
+
+
+def create_booking(request, tour_id):
+    if 'email' not in request.session:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        tour = get_object_or_404(Tour, id=tour_id)
+        user = User.objects.get(email=request.session['email'])
+        
+        tour_date = request.POST.get('tour_date')
+        persons = int(request.POST.get('persons', 1))
+        total_price = tour.price_per_person * persons
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        order = client.order.create({
+            "amount": int(total_price * 100),
+            "currency": "INR",
+            "payment_capture": 1
+        })
+
+        # Booking save karo
+        booking = Booking.objects.create(
+            user=user,
+            tour=tour,
+            tour_date=tour_date,
+            total_persons=persons,
+            total_price=total_price,
+            razorpay_order_id=order['id'],
+            is_paid=False
+        )
+
+        return render(request, 'payment_page.html', {
+            'tour': tour,
+            'user': user,
+            'persons': persons,
+            'total_price': total_price,
+            'amount_paise': int(total_price * 100),
+            'razorpay_key': settings.RAZORPAY_KEY_ID,
+            'razorpay_order_id': order['id'],
+        })
+    
+    return redirect('packages')
+
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == 'POST':
+        payment_id = request.POST.get('razorpay_payment_id')
+        order_id   = request.POST.get('razorpay_order_id')
+        signature  = request.POST.get('razorpay_signature')
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        try:
+            client.utility.verify_payment_signature({
+                'razorpay_order_id': order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            })
+            # Booking update karo
+            booking = Booking.objects.get(razorpay_order_id=order_id)
+            booking.razorpay_payment_id = payment_id
+            booking.is_paid = True
+            booking.save()
+
+            return render(request, 'payment_success.html', {'booking': booking})
+        except:
+            return render(request, 'payment_failed.html')
+    
+    return redirect('packages')
+
 def view_tour(request):
+    if 'email' not in request.session:
+        return redirect('login')
+    
     user = User.objects.get(email = request.session['email'])
     tours = Tour.objects.filter(user=user)
     return render(request, 'view_tour.html', {'tours': tours})
 
 
 def edit_tour(request,pk):
+    if 'email' not in request.session:
+        return redirect('login')
+    
     tour = get_object_or_404(Tour, id=pk)
     if request.method == 'POST':
         form = TourForm(request.POST, request.FILES, instance=tour)
@@ -95,12 +217,17 @@ def edit_tour(request,pk):
         'destinations': Destination.objects.all()
     })
 
+
+
+
 def packages(request):
     tours = Tour.objects.all()
     return render(request,'packages.html', {'tours': tours})
 
+
 def tour_details(request):
     return render(request, 'tour_details.html')
+
 
 def delete_tour(request, pk):
     tour = get_object_or_404(Tour, id=pk)

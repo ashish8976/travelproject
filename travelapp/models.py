@@ -17,8 +17,7 @@ class User(models.Model):
         return f"{self.fname}"
 
 
-class add_tour(models.Model):
-    pass
+
 
 
 class Destination(models.Model):
@@ -76,3 +75,26 @@ class Tour(models.Model):
     def __str__(self):
         return self.title
     
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+
+    tour_date = models.DateField()
+    tour_quantity = models.PositiveIntegerField()
+
+    tour_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    tour_date = models.DateField()
+    total_persons = models.PositiveIntegerField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    razorpay_order_id = models.CharField(max_length=100)
+    razorpay_payment_id = models.CharField(max_length=100, blank=True)
+    is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+

@@ -1,0 +1,50 @@
+{% extends "header.html" %}
+{% block container %}
+<style>
+  .navbar-light { background: #0A3D62 !important; }
+</style>
+<div style="margin-top: 80px;"></div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+      <div class="card border-0 shadow rounded-4 p-5">
+        
+        <div class="mb-4">
+          <span style="font-size: 70px;">🎉</span>
+        </div>
+        
+        <h3 class="fw-bold text-success mb-2">Payment Successful!</h3>
+        <p class="text-muted mb-4">Your tour has been booked successfully.</p>
+
+        <div class="bg-light rounded-3 p-3 mb-4 text-start">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Tour</span>
+            <span class="fw-semibold">{{ booking.tour.title }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Date</span>
+            <span class="fw-semibold">{{ booking.tour_date }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Persons</span>
+            <span class="fw-semibold">{{ booking.total_persons }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Amount Paid</span>
+            <span class="fw-semibold text-success">₹{{ booking.total_price }}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Payment ID</span>
+            <span class="fw-semibold" style="font-size:12px;">{{ booking.razorpay_payment_id }}</span>
+          </div>
+        </div>
+
+        <a href="{% url 'packages' %}" class="btn btn-primary rounded-pill px-4">
+          Explore More Tours
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

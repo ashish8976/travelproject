@@ -1,0 +1,17 @@
+{% extends "header.html" %}
+{% block container %}
+<style>
+  .navbar-light { background: #0A3D62 !important; }
+</style>
+<div style="margin-top: 80px;"></div>
+<div class="container py-5 text-center">
+    <div class="card shadow border-0 rounded-4 p-5 mx-auto" style="max-width:500px;">
+        <h1 class="text-success mb-3">🎉</h1>
+        <h3 class="text-success fw-bold">Payment Successful!</h3>
+        <p class="text-muted mt-2">Payment ID: {{ payment_id }}</p>
+        <a href="{% url 'packages' %}" class="btn btn-primary mt-3 rounded-pill px-4">
+            Explore More Tours
+        </a>
+    </div>
+</div>
+{% endblock %}

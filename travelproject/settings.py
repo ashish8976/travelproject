@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -82,7 +83,6 @@ DATABASES = {
         "PASSWORD":"12345",
         "HOST":"localhost",
         "PORT":"5432",
-
     }
 }
 
@@ -132,6 +132,14 @@ EMAIL_HOST_USER = 'ashishrajput8156@gmail.com'
 EMAIL_HOST_PASSWORD = 'nngk kmbo yrop ptpg'
 
 
-
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+SESSION_EXPIRE_SECONDS = 2000  # 1 hour
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+SESSION_TIMEOUT_REDIRECT = '/login'
+
+RAZORPAY_KEY_ID = 'rzp_test_Skc49T3SkZIeZE'
+RAZORPAY_KEY_SECRET = 'miHm2YxO5QxKhCjEFkTxL4NT'
+

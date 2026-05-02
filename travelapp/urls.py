@@ -47,6 +47,9 @@ urlpatterns = [
     path('edit_tour/<int:pk>/', views.edit_tour, name='edit_tour'),
     path('delete_tour/<int:pk>/',views.delete_tour,name='delete_tour'),
     path('update_tour/<int:pk>/',views.update_tour,name='update_tour'),
-    
-    
+    path('add_to_cart/<int:id>', views.add_to_cart, name='add_to_cart'),
+    path('booking/<int:tour_id>/', views.booking, name='booking'),
+    path('create_booking/<int:tour_id>/', views.create_booking, name='create_booking'),
+    path('payment_success/', views.payment_success, name='payment_success'),
+
 ]

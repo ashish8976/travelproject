@@ -1,0 +1,63 @@
+{% extends "header.html" %}
+{% block container %}
+<div class="container py-5">
+    <h3 class="mb-4">🛒 My Cart</h3>
+
+    {% if cart_items %}
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tour</th>
+                        <th>Date</th>
+                        <th>Persons</th>
+                        <th>Price/Person</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.tour.title }}</td>
+                        <td>{{ item.tour_date }}</td>
+                        <td>{{ item.tour_quantity }}</td>
+                        <td>₹{{ item.tour_price }}</td>
+                        <td>₹{{ item.total_price }}</td>
+                        <td>
+                            <a href="{% url 'remove_from_cart' item.id %}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Remove this item?')">
+                               ❌ Remove
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-success fw-bold">
+                        <td colspan="4" class="text-end">Grand Total:</td>
+                        <td>₹{{ grand_total }}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="text-end mt-3">
+            <a href="{% url 'packages' %}" class="btn btn-outline-secondary me-2">
+                ← Continue Browsing
+            </a>
+            <a href="{% url 'cart_checkout' %}" class="btn btn-success btn-lg">
+                Checkout & Pay →
+            </a>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info text-center">
+            <h5>Cart khali hai!</h5>
+            <a href="{% url 'packages' %}" class="btn btn-primary mt-2">Tours Dekhein</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

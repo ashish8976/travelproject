@@ -2,243 +2,166 @@
 {% load static %}
 {% block container %}
 
-        <!-- Header Start -->
-        <div class="container-fluid bg-breadcrumb">
-            <div class="container text-center py-5" style="max-width: 900px;">
-                <h3 class="text-white display-3 mb-4">Online Booking</h1>
-                <ol class="breadcrumb justify-content-center mb-0">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                    <li class="breadcrumb-item active text-white">Online Booking</li>
-                </ol>    
-            </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var spinner = document.getElementById('spinner');
+    if (spinner) {
+      spinner.classList.remove('show');
+    }
+  });
+</script>
+<style>
+  .navbar-light {
+    background: #0A3D62 !important;
+  }
+  .navbar-light .navbar-brand h1 {
+    color: #fff !important;
+  }
+</style>
+<br>
+<br> <br>
+
+<div class="container py-5">
+  <div class="row g-4">
+
+    <!-- LEFT: Tour Info -->
+    <div class="col-lg-4">
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden" style="margin-top: 20px;">
+    <img src="{{ tour.image.url }}" style="height:220px; object-fit:cover; width:100%;">
+        <div class="p-3">
+          <h5 class="fw-bold">{{ tour.title }}</h5>
+          <p class="mb-1"><i class="fa fa-map-marker-alt text-primary me-1"></i> {{ tour.destination }}</p>
+          <p class="mb-1"><i class="fa fa-clock text-primary me-1"></i> {{ tour.duration_days }} Days / {{ tour.duration_nights }} Nights</p>
+          <p class="mb-1"><i class="fa fa-users text-primary me-1"></i> Max {{ tour.max_persons }} Persons</p>
+          <div class="bg-primary text-white rounded-3 p-3 mt-3 d-flex justify-content-between align-items-center">
+            <span>Per Person</span>
+            <span class="fs-4 fw-bold">₹{{ tour.price_per_person }}</span>
+          </div>
         </div>
-        <!-- Header End -->
+      </div>
+    </div>
 
-        <!-- Tour Booking Start -->
-        <div class="container-fluid booking py-5">
-            <div class="container py-5">
-                <div class="row g-5 align-items-center">
-                    <div class="col-lg-6">
-                        <h5 class="section-booking-title pe-3">Booking</h5>
-                        <h1 class="text-white mb-4">Online Booking</h1>
-                        <p class="text-white mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maxime ullam esse fuga blanditiis accusantium pariatur quis sapiente, veniam doloribus praesentium? Repudiandae iste voluptatem fugiat doloribus quasi quo iure officia.
-                        </p>
-                        <p class="text-white mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maxime ullam esse fuga blanditiis accusantium pariatur quis sapiente, veniam doloribus praesentium? Repudiandae iste voluptatem fugiat doloribus quasi quo iure officia.
-                        </p>
-                        <a href="#" class="btn btn-light text-primary rounded-pill py-3 px-5 mt-2">Read More</a>
-                    </div>
-                    <div class="col-lg-6">
-                        <h1 class="text-white mb-3">Book A Tour Deals</h1>
-                        <p class="text-white mb-4">Get <span class="text-warning">50% Off</span> On Your First Adventure Trip With Travela. Get More Deal Offers Here.</p>
-                        <form>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control bg-white border-0" id="name" placeholder="Your Name">
-                                        <label for="name">Your Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control bg-white border-0" id="email" placeholder="Your Email">
-                                        <label for="email">Your Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating date" id="date3" data-target-input="nearest">
-                                        <input type="text" class="form-control bg-white border-0" id="datetime" placeholder="Date & Time" data-target="#date3" data-toggle="datetimepicker" />
-                                        <label for="datetime">Date & Time</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select bg-white border-0" id="select1">
-                                            <option value="1">Destination 1</option>
-                                            <option value="2">Destination 2</option>
-                                            <option value="3">Destination 3</option>
-                                        </select>
-                                        <label for="select1">Destination</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select bg-white border-0" id="SelectPerson">
-                                            <option value="1">Persons 1</option>
-                                            <option value="2">Persons 2</option>
-                                            <option value="3">Persons 3</option>
-                                        </select>
-                                        <label for="SelectPerson">Persons</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select bg-white border-0" id="CategoriesSelect">
-                                            <option value="1">Kids</option>
-                                            <option value="2">1</option>
-                                            <option value="3">2</option>
-                                            <option value="3">3</option>
-                                        </select>
-                                        <label for="CategoriesSelect">Categories</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control bg-white border-0" placeholder="Special Request" id="message" style="height: 100px"></textarea>
-                                        <label for="message">Special Request</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button class="btn btn-primary text-white w-100 py-3" type="submit">Book Now</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <!-- RIGHT: Booking Form -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 rounded-4 p-4">
+        <h4 class="fw-bold text-primary mb-4">Tour Booking </h4>
+
+        <form method="POST" action="{% url 'create_booking' tour.id %}">
+          {% csrf_token %}
+
+          <!-- Date -->
+          <div class="mb-4">
+            <label class="fw-semibold mb-2">Tour Date</label>
+            <input type="date" name="tour_date" class="form-control" required
+                   min="{{ today }}">
+          </div>
+
+          <!-- Person Quantity -->
+          <div class="mb-4">
+            <label class="fw-semibold mb-2">Number of Persons</label>
+            <div class="d-flex align-items-center gap-3">
+              <button type="button" class="btn btn-outline-primary rounded-circle fw-bold"
+                      style="width:40px;height:40px;" onclick="changeQty(-1)">−</button>
+              <span id="qty-show" class="fs-3 fw-bold text-primary">1</span>
+              <button type="button" class="btn btn-outline-primary rounded-circle fw-bold"
+                      style="width:40px;height:40px;" onclick="changeQty(1)">+</button>
+              <span class="text-muted small">(Max: {{ tour.max_persons }} persons)</span>
             </div>
-        </div>
-        <!-- Tour Booking End -->
+            <input type="hidden" name="persons" id="persons-input" value="1">
+          </div>
 
-        <!-- Subscribe Start -->
-        <div class="container-fluid subscribe py-5">
-            <div class="container text-center py-5">
-                <div class="mx-auto text-center" style="max-width: 900px;">
-                    <h5 class="subscribe-title px-3">Subscribe</h5>
-                    <h1 class="text-white mb-4">Our Newsletter</h1>
-                    <p class="text-white mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
-                    </p>
-                    <div class="position-relative mx-auto">
-                        <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                        <button type="button" class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
-                    </div>
-                </div>
+          <!-- Person Details -->
+          <div class="mb-4">
+            <label class="fw-semibold mb-2">Persons Details</label>
+            <div id="persons-container">
+              <!-- JavaScript se banta hai -->
             </div>
-        </div>
-        <!-- Subscribe End -->
+          </div>
 
-        <!-- Footer Start -->
-        <div class="container-fluid footer py-5">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item d-flex flex-column">
-                            <h4 class="mb-4 text-white">Get In Touch</h4>
-                            <a href=""><i class="fas fa-home me-2"></i> 123 Street, New York, USA</a>
-                            <a href=""><i class="fas fa-envelope me-2"></i> info@example.com</a>
-                            <a href=""><i class="fas fa-phone me-2"></i> +012 345 67890</a>
-                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +012 345 67890</a>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-share fa-2x text-white me-2"></i>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item d-flex flex-column">
-                            <h4 class="mb-4 text-white">Company</h4>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item d-flex flex-column">
-                            <h4 class="mb-4 text-white">Support</h4>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Contact</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item">
-                            <div class="row gy-3 gx-2 mb-4">
-                                <div class="col-xl-6">
-                                    <form>
-                                        <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="select1">
-                                                <option value="1">Arabic</option>
-                                                <option value="2">German</option>
-                                                <option value="3">Greek</option>
-                                                <option value="3">New York</option>
-                                            </select>
-                                            <label for="select1">English</label>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-xl-6">
-                                    <form>
-                                        <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="select1">
-                                                <option value="1">USD</option>
-                                                <option value="2">EUR</option>
-                                                <option value="3">INR</option>
-                                                <option value="3">GBP</option>
-                                            </select>
-                                            <label for="select1">$</label>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <h4 class="text-white mb-3">Payments</h4>
-                            <div class="footer-bank-card">
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
-                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-        
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright text-body py-4">
-            <div class="container">
-                <div class="row g-4 align-items-center">
-                    <div class="col-md-6 text-center text-md-end mb-md-0">
-                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Your Site Name</a>, All right reserved.
-                    </div>
-                    <div class="col-md-6 text-center text-md-start">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="text-white" href="https://htmlcodex.com">HTML Codex</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright End -->
+          <!-- Total Price -->
+          <div class="bg-success rounded-3 p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-semibold text-white fs-5">Total Payment</span>
+        <span class="fs-2 fw-bold text-white">₹<span id="total-price">{{ tour.price_per_person }}</span></span>
+    </div>
+    <small class="text-white opacity-75"><span id="qty-text">1</span> person(s) × ₹{{ tour.price_per_person }} per person</small>
+</div>
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            💳 Pay Now →
+          </button>
+        </form>
+      </div>
+    </div>
 
-        
-        <!-- JavaScript Libraries -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="{% static 'lib/easing/easing.min.js' %}"></script>
-        <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
-        <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
-        <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
-        
+  </div>
+</div>
 
-        <!-- Template Javascript -->
-        <script src="{% static 'js/main.js' %}"></script>
-    </body>
+<script>
+  var perPerson = {{ tour.price_per_person }};
+  var maxPersons = {{ tour.max_persons }};
+  var qty = 1;
 
-    {% endblock %}
+  function changeQty(val) {
+    qty = qty + val;
+    if (qty < 1) qty = 1;
+    if (qty > maxPersons) qty = maxPersons;
 
-</html>
+    document.getElementById('qty-show').innerText = qty;
+    document.getElementById('persons-input').value = qty;
+    document.getElementById('total-price').innerText = (perPerson * qty).toFixed(2);
+    document.getElementById('qty-text').innerText = qty + ' person';
+
+    renderPersonForms();
+  }
+
+ function renderPersonForms() {
+    var container = document.getElementById('persons-container');
+    var existingCount = container.children.length;
+
+    if (qty > existingCount) {
+        // Sirf naye person ka form ADD karo
+        for (var i = existingCount + 1; i <= qty; i++) {
+            var div = document.createElement('div');
+            div.className = 'border rounded-3 p-3 mb-3';
+            div.id = 'person-card-' + i;
+            div.innerHTML = `
+                <h6 class="fw-bold text-primary mb-3">👤 Person ${i}</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="small fw-semibold">Full Name</label>
+                        <input type="text" name="person_name_${i}" class="form-control" placeholder="Enter full name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small fw-semibold">Age</label>
+                        <input type="number" name="person_age_${i}" class="form-control" placeholder="Age" min="1" max="100" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small fw-semibold">Gender</label>
+                        <select name="person_gender_${i}" class="form-select">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small fw-semibold">Mobile</label>
+                        <input type="text" name="person_mobile_${i}" class="form-control" placeholder="Enter mobile number">
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    } else if (qty < existingCount) {
+        // Sirf last wala form REMOVE karo
+        for (var j = existingCount; j > qty; j--) {
+            var card = document.getElementById('person-card-' + j);
+            if (card) card.remove();
+        }
+    }
+}
+
+  // Page load pe 1 person ka form dikhao
+  renderPersonForms();
+</script>
+
+{% endblock %}
