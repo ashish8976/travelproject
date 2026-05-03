@@ -52,12 +52,22 @@
                          style="height:250px; object-fit:cover;"
                          alt="{{ dest.name }}">
                     <div class="destination-overlay p-4">
-                        <h4 class="text-white mb-2 mt-3">{{ dest.name }}</h4>
-                        <p class="text-white small mb-2">{{ dest.country }}</p>
-                        <a href="{% url 'packages' %}" class="btn-hover text-white">
-                            Explore Tours <i class="fa fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
+    <h4 class="text-white mb-2 mt-3">{{ dest.name }}</h4>
+    <p class="text-white small mb-2">{{ dest.country }}</p>
+    <a href="{% url 'packages' %}" class="btn-hover text-white">
+        Explore Tours <i class="fa fa-arrow-right ms-2"></i>
+    </a>
+
+    {% if request.session.email %}
+    <a href="{% url 'toggle_favourite' dest.id %}" class="ms-2" title="Like">
+        {% if dest.id in liked_ids %}
+            <i class="fas fa-heart text-danger fs-5"></i>
+        {% else %}
+            <i class="far fa-heart text-white fs-5"></i>
+        {% endif %}
+    </a>
+    {% endif %}
+</div>
                     <div class="search-icon">
                         <a href="{{ dest.image.url }}" data-lightbox="dest-{{ dest.id }}">
                             <i class="fa fa-plus-square fa-1x btn btn-light btn-lg-square text-primary"></i>

@@ -9,7 +9,7 @@ import time
 import pycountry
 from . form import TourForm
 from . models import Destination
-from .models import Tour, Destination, Cart, Booking
+from .models import Tour, Destination, Cart, Booking, FavouriteDestination
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -28,6 +28,20 @@ def tour(request):
         'national_tours': national_tours,
         'international_tours': international_tours,
     })
+
+def toggle_favourite(request, dest_id):
+    if 'email' not in request.session:
+        return redirect('login')
+    
+    user = User.objects.get(email=request.session['email'])
+    destination = get_object_or_404(Destination, id=dest_id)
+    
+    fav, created = FavouriteDestination.objects.get_or_create(user=user, destination=destination)
+    
+    if not created:
+        fav.delete()  
+    
+    return redirect('destination')
 
 
 def gallery(request):
@@ -64,9 +78,17 @@ def contact(request):
 def destination(request):
     destinations = Destination.objects.all()
     countries = destinations.values_list('country', flat=True).distinct()
+    
+    liked_ids = []
+    if 'email' in request.session:
+        user = User.objects.get(email=request.session['email'])
+        liked_ids = FavouriteDestination.objects.filter(user=user).values_list('destination_id', flat=True)
+    
+
     return render(request, 'destination.html', {
         'destinations': destinations,
-        'countries': countries
+        'countries': countries,
+        'liked_ids': liked_ids,
     })
 
 def add_tour(request):
@@ -242,6 +264,8 @@ def update_tour(request):
 def profile(request):
     user = User.objects.get(email=request.session['email'])
     countries = [country.name for country in pycountry.countries]
+    favourites = FavouriteDestination.objects.filter(user=user).select_related('destination')
+    favourite_count = favourites.count()
     if request.method == "POST":
 
          if request.POST.get('fname'):
@@ -258,7 +282,7 @@ def profile(request):
          user.save()
          return redirect('profile')
     else:
-        return render(request, "profile.html", {'user': user,'countries': countries})
+        return render(request, "profile.html", {'user': user,'countries': countries,'favourites': favourites,'favourite_count':favourite_count})
 
 def register(request):
     countries = [country.name for country in pycountry.countries]

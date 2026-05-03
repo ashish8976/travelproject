@@ -51,5 +51,5 @@ urlpatterns = [
     path('booking/<int:tour_id>/', views.booking, name='booking'),
     path('create_booking/<int:tour_id>/', views.create_booking, name='create_booking'),
     path('payment_success/', views.payment_success, name='payment_success'),
-
+    path('toggle_favourite/<int:dest_id>/', views.toggle_favourite, name='toggle_favourite'),
 ]

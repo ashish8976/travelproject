@@ -98,3 +98,13 @@ class Booking(models.Model):
     is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class FavouriteDestination(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favourites')
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='liked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'destination')  # ek user ek destination ek baar hi like kar sakta hai
+
+    def __str__(self):
+        return f"{self.user.fname} liked {self.destination.name}"

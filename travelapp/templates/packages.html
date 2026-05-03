@@ -231,10 +231,10 @@
     margin-bottom: 0;
   }
 
-  /* Buttons */
+  /* Buttons — ab sirf 2 buttons hain (cart hata diya) */
   .card-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     border-top: 1.5px solid #EEF2F7;
     margin-top: 18px;
   }
@@ -261,15 +261,9 @@
   .btn-booknow {
     color: #fff;
     background: var(--ocean);
-    border-right: 1.5px solid rgba(255,255,255,0.15);
-  }
-  .btn-booknow:hover { background: var(--sky); }
-  .btn-addcart {
-    color: var(--ocean);
-    background: var(--gold);
     border-bottom-right-radius: var(--radius);
   }
-  .btn-addcart:hover { background: #e0941a; color: #fff; }
+  .btn-booknow:hover { background: var(--sky); }
 
   /* Empty State */
   .empty-state {
@@ -361,19 +355,6 @@
     text-decoration: none;
   }
   .btn-modal-book:hover { background: var(--sky); color: #fff; }
-  .btn-modal-cart {
-    background: var(--gold);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    padding: 10px 22px;
-    font-size: 14px;
-    transition: background .2s;
-    text-decoration: none;
-  }
-  .btn-modal-cart:hover { background: #e0941a; color: #fff; }
   .btn-modal-close {
     background: #fff;
     color: var(--gray);
@@ -479,7 +460,7 @@
           <p class="card-desc">{{ i.description|truncatewords:18 }}</p>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Action Buttons — Cart hata diya, sirf 2 buttons -->
         <div class="card-actions">
           <a href="#"
              class="btn-readmore"
@@ -500,10 +481,7 @@
             <i class="fa fa-eye"></i> Details
           </a>
           <a href="{% url 'booking' i.id %}" class="btn-booknow">
-            <i class="fa fa-calendar-check"></i> Book
-          </a>
-          <a href="{% url 'add_to_cart' i.id %}" class="btn-addcart">
-            <i class="fa fa-shopping-cart"></i> Cart
+            <i class="fa fa-calendar-check"></i> Book Now
           </a>
         </div>
 
@@ -577,16 +555,13 @@
         <p class="modal-desc" id="modal-description"></p>
       </div>
 
-      <!-- Footer -->
+      <!-- Footer — Cart button hata diya -->
       <div class="modal-footer">
         <button type="button" class="btn-modal-close" data-bs-dismiss="modal">
           <i class="fa fa-times me-1"></i> Close
         </button>
         <a href="#" id="modal-book-btn" class="btn-modal-book">
           <i class="fa fa-calendar-check me-1"></i> Book Now
-        </a>
-        <a href="#" id="modal-cart-btn" class="btn-modal-cart">
-          <i class="fa fa-shopping-cart me-1"></i> Add to Cart
         </a>
       </div>
 
@@ -626,7 +601,6 @@
 
     const id = el.dataset.tourid;
     document.getElementById('modal-book-btn').href = '/booking/' + id + '/';
-    document.getElementById('modal-cart-btn').href = '/cart/add/' + id + '/';
   }
 
   // ── Filter ──
