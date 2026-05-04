@@ -184,15 +184,13 @@ def create_booking(request, tour_id):
             "payment_capture": 1
         })
 
-        booking = Booking.objects.create(
-            user=user,
-            tour=tour,
-            tour_date=tour_date,
-            total_persons=persons,
-            total_price=total_price,
-            razorpay_order_id=order['id'],
-            is_paid=False
-        )
+        request.session['pending_booking'] = {
+            'tour_id': tour.id,
+            'tour_date': str(tour_date),
+            'total_persons': persons,
+            'total_price': str(total_price),
+            'razorpay_order_id': order['id'],
+        }
 
         return render(request, 'payment_page.html', {
             'tour': tour,
@@ -205,7 +203,6 @@ def create_booking(request, tour_id):
         })
     
     return redirect('packages')
-
 
 @csrf_exempt
 def payment_success(request):
@@ -221,17 +218,34 @@ def payment_success(request):
                 'razorpay_payment_id': payment_id,
                 'razorpay_signature': signature
             })
-            # Booking update karo
-            booking = Booking.objects.get(razorpay_order_id=order_id)
-            booking.razorpay_payment_id = payment_id
-            booking.is_paid = True
-            booking.save()
+
+            pending = request.session.get('pending_booking')
+            if not pending:
+                return redirect('packages')
+
+            user = User.objects.get(email=request.session['email'])
+            tour = get_object_or_404(Tour, id=pending['tour_id'])
+
+            booking = Booking.objects.create(
+                user=user,
+                tour=tour,
+                tour_date=pending['tour_date'],
+                total_persons=pending['total_persons'],
+                total_price=pending['total_price'],
+                razorpay_order_id=pending['razorpay_order_id'],
+                razorpay_payment_id=payment_id,
+                is_paid=True
+            )
+
+            del request.session['pending_booking']
 
             return render(request, 'payment_success.html', {'booking': booking})
+
         except:
             return render(request, 'payment_failed.html')
     
     return redirect('packages')
+
 
 def view_tour(request):
     if 'email' not in request.session:
