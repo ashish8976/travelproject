@@ -1,0 +1,77 @@
+{% extends "header.html" %}
+{% load static %}
+{% block container %}
+
+<!-- Header -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h3 class="text-white display-3 mb-4">
+            {% if tour_type == 'weekend' %}Weekend Tours
+            {% elif tour_type == 'holiday' %}Holiday Tours
+            {% elif tour_type == 'family' %}Family Tours
+            {% elif tour_type == 'beach' %}Beach Tours
+            {% elif tour_type == 'adventure' %}Adventure Tours
+            {% elif tour_type == 'honeymoon' %}Honeymoon Tours
+            {% else %}{{ tour_type }} Tours
+            {% endif %}
+        </h3>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tour' %}">Tours</a></li>
+            <li class="breadcrumb-item active text-white">{{ tour_type }}</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Tours List -->
+<div class="container py-5">
+    <div class="row g-4">
+        {% for t in tours %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm" style="border-radius:16px; overflow:hidden;">
+                <img src="{{ t.image.url }}" class="card-img-top" 
+                     style="height:220px; object-fit:cover;" alt="{{ t.title }}">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ t.title }}</h5>
+                    <p class="text-muted small mb-1">
+                        <i class="fa fa-map-marker-alt me-1"></i>
+                        {{ t.destination.name }}, {{ t.destination.country }}
+                    </p>
+                    <p class="text-muted small mb-2">
+                        <i class="fa fa-calendar-alt me-1"></i>
+                        {{ t.duration_days }} Days / {{ t.duration_nights }} Nights
+                    </p>
+                    <p class="card-text text-muted small">{{ t.description|truncatewords:15 }}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center bg-white border-0 pb-3 px-3">
+                    <span class="fw-bold text-primary fs-5">₹{{ t.price_per_person }}<small class="text-muted fs-6">/person</small></span>
+                    <a href="{% url 'booking' t.id %}" class="btn btn-primary rounded-pill px-4">Book Now</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fa fa-suitcase fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Is category mein abhi koi tour nahi hai.</h5>
+            <a href="{% url 'tour' %}" class="btn btn-primary rounded-pill mt-3">Back to Tours</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'tour' %}" class="btn btn-outline-primary rounded-pill px-5">
+            <i class="fa fa-arrow-left me-2"></i> Back to All Categories
+        </a>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('load', function() {
+        var spinner = document.getElementById('spinner');
+        if (spinner) {
+            spinner.classList.remove('show');
+        }
+    });
+</script>
+
+{% endblock %}

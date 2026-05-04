@@ -22,11 +22,16 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def tour(request):
-    national_tours = Tour.objects.filter(category='national')
-    international_tours = Tour.objects.filter(category='international')
+    tour_types = Tour.objects.values_list('tour_type', flat=True).distinct()
     return render(request, 'tour.html', {
-        'national_tours': national_tours,
-        'international_tours': international_tours,
+        'tour_types': tour_types,
+    })
+
+def tour_by_type(request, tour_type):
+    tours = Tour.objects.filter(tour_type=tour_type)
+    return render(request, 'tour_by_type.html', {
+        'tours': tours,
+        'tour_type': tour_type,
     })
 
 def toggle_favourite(request, dest_id):
@@ -60,7 +65,24 @@ def Page_404(request):
     return render(request, '404.html')
 
 def index(request):
-    return render(request, 'index.html')
+    destinations = Destination.objects.all()
+    countries = destinations.values_list('country', flat=True).distinct()
+    national_tours = Tour.objects.filter(category='national') 
+    international_tours = Tour.objects.filter(category='international') 
+    tour_types = Tour.objects.values_list('tour_type', flat=True).distinct()
+    liked_ids = []
+    if 'email' in request.session:
+        user = User.objects.get(email=request.session['email'])
+        liked_ids = FavouriteDestination.objects.filter(user=user).values_list('destination_id', flat=True)
+    
+    return render(request, 'index.html', {
+        'destinations': destinations,
+        'countries': countries,
+        'liked_ids': liked_ids,
+        'national_tours':national_tours,
+        'international_tours':international_tours,
+        'tour_types':tour_types,
+    })
 
 def about(request):
     return render(request,'about.html')
@@ -162,7 +184,6 @@ def create_booking(request, tour_id):
             "payment_capture": 1
         })
 
-        # Booking save karo
         booking = Booking.objects.create(
             user=user,
             tour=tour,
