@@ -293,10 +293,9 @@
 
                     <!-- Stats -->
                     <div class="row g-2">
-                        <div class="col-6"><div class="stat-box"><div class="stat-number">0</div><div class="stat-label">Trips Taken</div></div></div>
+                        <div class="col-6"><div class="stat-box"><div class="stat-number">{{total_booking}}</div><div class="stat-label">Trips Taken</div></div></div>
                         <div class="col-6"><div class="stat-box"><div class="stat-number">{{ favourite_count }}</div><div class="stat-label">Wishlist</div></div></div>
-                        <div class="col-6"><div class="stat-box"><div class="stat-number">0</div><div class="stat-label">Reviews</div></div></div>
-                        <div class="col-6"><div class="stat-box"><div class="stat-number">0</div><div class="stat-label">Upcoming</div></div></div>
+                        
                     </div>
                 </div>
 
@@ -445,38 +444,94 @@
                 
 
                     <!-- Recent Bookings -->
-                    <div id="bookings" class="profile-card card p-4 mb-4">
-                        <span class="section-card-title"><i class="fas fa-suitcase me-2"></i> Recent Bookings</span>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Destination</th>
-                                        <th>Date</th>
-                                        <th>Travelers</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><i class="fas fa-map-marker-alt me-2" style="color:#0d3b66;"></i>
-                                            <strong>Bali, Indonesia</strong>
-                                        </td>
-                                        <td>Mar 15, 2026</td>
-                                        <td>2</td>
-                                        <td>$1,250</td>
-                                        <td><span class="badge bg-success rounded-pill px-3">Confirmed</span></td>
-                                    </tr>
-                                    
-                                    
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+         <!-- Recent Bookings -->
+<div id="bookings" class="profile-card card p-4 mb-4">
 
-                    <!-- Favourite Destinations -->
+    <span class="section-card-title">
+        <i class="fas fa-suitcase me-2"></i>
+        Recent Bookings
+    </span>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Destination</th>
+                    <th>Date</th>
+                    <th>Travelers</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for booking in bookings %}
+
+                <tr>
+
+                    <td>
+                        <i class="fas fa-map-marker-alt me-2"
+                           style="color:#0d3b66;"></i>
+
+                        <strong>
+                            {{ booking.tour.title }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ booking.tour_date|date:"d M Y" }}
+                    </td>
+
+                    <td>
+                        {{ booking.total_persons }}
+                    </td>
+
+                    <td>
+                        ₹{{ booking.total_price }}
+                    </td>
+
+                    <td>
+
+                        {% if booking.is_paid %}
+
+                        <span class="badge bg-success rounded-pill px-3">
+                            Paid
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger rounded-pill px-3">
+                            Pending
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        No bookings found
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+                    
                     <!-- Favourite Destinations -->
 <div id="wishlist" class="profile-card card p-4">
     <span class="section-card-title"><i class="fas fa-heart me-2"></i> Favourite Destinations</span>

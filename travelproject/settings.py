@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "rest_framework",
     "travelapp",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -140,6 +141,5 @@ SESSION_EXPIRE_SECONDS = 2000  # 1 hour
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SESSION_TIMEOUT_REDIRECT = '/login'
 
-RAZORPAY_KEY_ID = 'rzp_test_Skc49T3SkZIeZE'
-RAZORPAY_KEY_SECRET = 'miHm2YxO5QxKhCjEFkTxL4NT'
-
+RAZORPAY_KEY_ID = 'rzp_test_SqlLBNSWfkF0yg'
+RAZORPAY_KEY_SECRET =  'loxNwoEovBX6c3MS027MSogH'

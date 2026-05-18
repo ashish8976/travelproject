@@ -104,7 +104,7 @@ class FavouriteDestination(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'destination')  # ek user ek destination ek baar hi like kar sakta hai
+        unique_together = ('user', 'destination') 
 
     def __str__(self):
         return f"{self.user.fname} liked {self.destination.name}"

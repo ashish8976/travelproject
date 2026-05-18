@@ -4,20 +4,13 @@ from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
 from django.conf import settings
 import random
-from . models import User
 import time
 import pycountry
 from . form import TourForm
-from . models import Destination
-from .models import Tour, Destination, Cart, Booking, FavouriteDestination
+from .models import Tour, Destination, Cart, Booking, FavouriteDestination, User
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from datetime import date
 import razorpay
-from django.conf import settings
-from datetime import date
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
@@ -168,11 +161,11 @@ def booking(request, tour_id):
 def create_booking(request, tour_id):
     if 'email' not in request.session:
         return redirect('login')
-    
+
     if request.method == 'POST':
         tour = get_object_or_404(Tour, id=tour_id)
         user = User.objects.get(email=request.session['email'])
-        
+
         tour_date = request.POST.get('tour_date')
         persons = int(request.POST.get('persons', 1))
         total_price = tour.price_per_person * persons
@@ -201,8 +194,10 @@ def create_booking(request, tour_id):
             'razorpay_key': settings.RAZORPAY_KEY_ID,
             'razorpay_order_id': order['id'],
         })
-    
+
     return redirect('packages')
+
+
 
 @csrf_exempt
 def payment_success(request):
@@ -238,12 +233,13 @@ def payment_success(request):
             )
 
             del request.session['pending_booking']
-
             return render(request, 'payment_success.html', {'booking': booking})
 
-        except:
+
+        except Exception as e:
+            print("Razorpay Error:", e)
             return render(request, 'payment_failed.html')
-    
+
     return redirect('packages')
 
 
@@ -301,6 +297,10 @@ def profile(request):
     countries = [country.name for country in pycountry.countries]
     favourites = FavouriteDestination.objects.filter(user=user).select_related('destination')
     favourite_count = favourites.count()
+    total_booking = Booking.objects.filter(user=user).count()
+    bookings = Booking.objects.filter(
+        user=user
+    ).select_related('tour').order_by('-created_at')
     if request.method == "POST":
 
          if request.POST.get('fname'):
@@ -317,7 +317,14 @@ def profile(request):
          user.save()
          return redirect('profile')
     else:
-        return render(request, "profile.html", {'user': user,'countries': countries,'favourites': favourites,'favourite_count':favourite_count})
+        return render(request, "profile.html", {
+            'user': user,
+            'countries': countries,
+            'favourites': favourites,
+            'favourite_count':favourite_count,
+            'bookings' : bookings,
+            'total_booking' : total_booking,
+        })
 
 def register(request):
     countries = [country.name for country in pycountry.countries]
